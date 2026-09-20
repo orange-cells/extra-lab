@@ -16,23 +16,27 @@ export default (express, zlib, multer) => {
     });
 
     app.post('/zipper/', upload.any(), (req, res) => {
-        let fileBuffer = null;
-
         if (req.files && req.files.length > 0) {
-            fileBuffer = req.files[0].buffer;
-        } else if (Buffer.isBuffer(req.body)) {
-            fileBuffer = req.body;
+            zlibModule.gzip(req.files[0], (gzErr, gzippedData) => {
+                if (gzErr) {
+                    return res.status(500);
+                }
+                res.setHeader('Content-Type', 'application/gzip');
+                res.setHeader('Content-Disposition', 'attachment; filename="result.gz"');
+                res.send(gzippedData);
+            });
         }
 
-        if (!fileBuffer) {
-            return res.status(400).send('orangecells_1');
+        if (req.file && req.file.buffer) {
+            zlibModule.gzip(req.file.buffer, (gzErr, gzippedData) => {
+                if (gzErr) {
+                    return res.status(500);
+                }
+                res.setHeader('Content-Type', 'application/gzip');
+                res.setHeader('Content-Disposition', 'attachment; filename="result.gz"');
+                res.send(gzippedData);
+            });
         }
-
-        zlib.gzip(fileBuffer, (err, gzippedData) => {
-            res.setHeader('Content-Type', 'application/gzip');
-            res.setHeader('Content-Disposition', 'attachment; filename="result.gz"');
-            res.send(gzippedData);
-        });
     });
 
     app.all('*', (req, res) => {
