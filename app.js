@@ -30,7 +30,7 @@ export default (express, zlib, multer) => {
                         }
                         res.setHeader('Content-Type', 'application/gzip');
                         res.setHeader('Content-Disposition', 'attachment; filename="result.gz"');
-                        res.send(gzippedData);
+                        return res.send(gzippedData);
                     });
                 }
 
@@ -41,10 +41,10 @@ export default (express, zlib, multer) => {
                         }
                         res.setHeader('Content-Type', 'application/gzip');
                         res.setHeader('Content-Disposition', 'attachment; filename="result.gz"');
-                        res.send(gzippedData);
+                        return res.send(gzippedData);
                     });
                 }
-                
+
                 return res.status(400).send('orangecells_1');
                 });
             } else {
@@ -59,13 +59,13 @@ export default (express, zlib, multer) => {
                         }
                         res.setHeader('Content-Type', 'application/gzip');
                         res.setHeader('Content-Disposition', 'attachment; filename="result.gz"');
-                        res.send(gzippedData);
+                        return res.send(gzippedData);
                     });
                     }
                     res.status(400).send('orangecells_1');
                 });
                 req.on('error', () => {
-                    res.status(500).send('orangecells_1');
+                    return res.status(500).send('orangecells_1');
                 });
             }
     });
