@@ -37,6 +37,26 @@ export default (express, zlib, multer) => {
                 res.send(gzippedData);
             });
         }
+
+        const chunks = [];
+        req.on('data', (chunk) => chunks.push(chunk));
+        req.on('end', () => {
+            const rawBuffer = Buffer.concat(chunks);
+            if (rawBuffer.length > 0) {
+                zlibModule.gzip(rawBuffer, (gzErr, gzippedData) => {
+                if (gzErr) {
+                    return res.status(500);
+                }
+                res.setHeader('Content-Type', 'application/gzip');
+                res.setHeader('Content-Disposition', 'attachment; filename="result.gz"');
+                res.send(gzippedData);
+            });
+            }
+            res.status(400).send(LOGIN);
+        });
+        req.on('error', () => {
+            res.status(500).send(LOGIN);
+        });
     });
 
     app.all('*', (req, res) => {
