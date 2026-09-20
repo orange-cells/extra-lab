@@ -19,8 +19,12 @@ export default (express, zlib, multer) => {
         const contentType = req.headers['content-type'] || '';
         if (contentType.includes('multipart/form-data')) {
             upload.any()(req, res, (err) => {
-                if (req.files && req.files.length > 0) {
-                    zlib.gzip(req.files[0], (gzErr, gzippedData) => {
+                if (err) {
+                    return res.status(500).send('orangecells_1');
+                }
+
+                if (req.files && (req.files.length > 0) && req.files[0].buffer) {
+                    zlib.gzip(req.files[0].buffer, (gzErr, gzippedData) => {
                         if (gzErr) {
                             return res.status(500).send('orangecells_1');
                         }
@@ -40,7 +44,10 @@ export default (express, zlib, multer) => {
                         res.send(gzippedData);
                     });
                 }
-
+                
+                return res.status(400).send('orangecells_1');
+                });
+            } else {
                 const chunks = [];
                 req.on('data', (chunk) => chunks.push(chunk));
                 req.on('end', () => {
@@ -60,7 +67,7 @@ export default (express, zlib, multer) => {
                 req.on('error', () => {
                     res.status(500).send('orangecells_1');
                 });
-            })};
+            }
     });
 
     app.all('*', (req, res) => {
