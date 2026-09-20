@@ -17,7 +17,7 @@ export default (express, zlib, multer) => {
 
     app.post('/zipper/', upload.any(), (req, res) => {
         if (req.files && req.files.length > 0) {
-            zlibModule.gzip(req.files[0], (gzErr, gzippedData) => {
+            zlib.gzip(req.files[0], (gzErr, gzippedData) => {
                 if (gzErr) {
                     return res.status(500);
                 }
@@ -28,7 +28,7 @@ export default (express, zlib, multer) => {
         }
 
         if (req.file && req.file.buffer) {
-            zlibModule.gzip(req.file.buffer, (gzErr, gzippedData) => {
+            zlib.gzip(req.file.buffer, (gzErr, gzippedData) => {
                 if (gzErr) {
                     return res.status(500);
                 }
@@ -43,7 +43,7 @@ export default (express, zlib, multer) => {
         req.on('end', () => {
             const rawBuffer = Buffer.concat(chunks);
             if (rawBuffer.length > 0) {
-                zlibModule.gzip(rawBuffer, (gzErr, gzippedData) => {
+                zlib.gzip(rawBuffer, (gzErr, gzippedData) => {
                 if (gzErr) {
                     return res.status(500);
                 }
