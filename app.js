@@ -16,12 +16,13 @@ export default (express, zlib, multer) => {
     });
 
     app.post('/zipper/', (req, res) => {
+        const contentType = req.headers['content-type'] || '';
         if (contentType.includes('multipart/form-data')) {
             upload.any()(req, res, (err) => {
                 if (req.files && req.files.length > 0) {
                     zlib.gzip(req.files[0], (gzErr, gzippedData) => {
                         if (gzErr) {
-                            return res.status(500);
+                            return res.status(500).send('orangecells_1');
                         }
                         res.setHeader('Content-Type', 'application/gzip');
                         res.setHeader('Content-Disposition', 'attachment; filename="result.gz"');
@@ -32,7 +33,7 @@ export default (express, zlib, multer) => {
                 if (req.file && req.file.buffer) {
                     zlib.gzip(req.file.buffer, (gzErr, gzippedData) => {
                         if (gzErr) {
-                            return res.status(500);
+                            return res.status(500).send('orangecells_1');
                         }
                         res.setHeader('Content-Type', 'application/gzip');
                         res.setHeader('Content-Disposition', 'attachment; filename="result.gz"');
@@ -47,17 +48,17 @@ export default (express, zlib, multer) => {
                     if (rawBuffer.length > 0) {
                         zlib.gzip(rawBuffer, (gzErr, gzippedData) => {
                         if (gzErr) {
-                            return res.status(500);
+                            return res.status(500).send('orangecells_1');
                         }
                         res.setHeader('Content-Type', 'application/gzip');
                         res.setHeader('Content-Disposition', 'attachment; filename="result.gz"');
                         res.send(gzippedData);
                     });
                     }
-                    res.status(400).send(LOGIN);
+                    res.status(400).send('orangecells_1');
                 });
                 req.on('error', () => {
-                    res.status(500).send(LOGIN);
+                    res.status(500).send('orangecells_1');
                 });
             })};
     });
